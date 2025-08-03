@@ -4,3 +4,8 @@ sqlalchemy==2.0.23
 psycopg2-binary==2.9.9
 pydantic==2.5.0
 python-multipart==0.0.6
+pandas==2.1.4
+numpy==1.24.3
+schedule==1.2.0
+python-dateutil==2.8.2
+python-cors==1.7.0
