@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportar - EcoVision</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoVision</span>
+            </div>
+
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="species.html" class="nav-link">
+                    <i class="fas fa-paw"></i> Especies
+                </a>
+                <a href="pipeline.html" class="nav-link">
+                    <i class="fas fa-cogs"></i> Pipeline
+                </a>
+                <a href="report.html" class="nav-link active">
+                    <i class="fas fa-camera"></i> Reportar
+                </a>
+            </div>
+
+            <button class="dark-mode-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="report-page">
+        <div class="page-header">
+            <h1><i class="fas fa-camera"></i> Reportar Avistamiento</h1>
+            <p>Ayuda a la ciencia ciudadana reportando tus avistamientos de fauna</p>
+        </div>
+
+        <div class="report-container">
+            <form class="report-form" id="reportForm">
+                <div class="form-section">
+                    <h2><i class="fas fa-paw"></i> Información de la Especie</h2>
+
+                    <div class="form-group">
+                        <label for="speciesName">Nombre de la Especie *</label>
+                        <input type="text" id="speciesName" name="species" required
+                               placeholder="Ej: Quetzal Resplandeciente">
+                        <div class="suggestions" id="speciesSuggestions"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scientificName">Nombre Científico</label>
+                        <input type="text" id="scientificName" name="scientific_name"
+                               placeholder="Ej: Pharomachrus mocinno">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Categoría *</label>
+                        <select id="category" name="category" required>
+                            <option value="">Seleccionar categoría</option>
+                            <option value="birds">Aves</option>
+                            <option value="mammals">Mamíferos</option>
+                            <option value="reptiles">Reptiles</option>
+                            <option value="amphibians">Anfibios</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2><i class="fas fa-map-marker-alt"></i> Ubicación</h2>
+
+                    <div class="form-group">
+                        <label for="habitat">Hábitat *</label>
+                        <select id="habitat" name="habitat" required>
+                            <option value="">Seleccionar hábitat</option>
+                            <option value="bosque_nuboso">Bosque Nuboso</option>
+                            <option value="bosque_tropical">Bosque Tropical</option>
+                            <option value="bosque_seco">Bosque Seco</option>
+                            <option value="manglares">Manglares</option>
+                            <option value="zona_costera">Zona Costera</option>
+                            <option value="jardin_urbano">Jardín Urbano</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Coordenadas</label>
+                        <div class="coordinates-group">
+                            <input type="number" id="latitude" name="latitude"
+                                   placeholder="Latitud" step="any">
+                            <input type="number" id="longitude" name="longitude"
+                                   placeholder="Longitud" step="any">
+                            <button type="button" class="btn-location" id="getLocation">
+                                <i class="fas fa-crosshairs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2><i class="fas fa-camera"></i> Evidencia Visual</h2>
+
+                    <div class="form-group">
+                        <label for="photo">Fotografía</label>
+                        <div class="photo-upload" id="photoUpload">
+                            <input type="file" id="photo" name="photo" accept="image/*">
+                            <div class="upload-area">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
+                                <small>Formatos: JPG, PNG, WebP (máx. 5MB)</small>
+                            </div>
+                            <div class="photo-preview" id="photoPreview"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2><i class="fas fa-info-circle"></i> Detalles Adicionales</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="weather">Condiciones Climáticas</label>
+                            <select id="weather" name="weather">
+                                <option value="">Seleccionar</option>
+                                <option value="soleado">Soleado</option>
+                                <option value="nublado">Nublado</option>
+                                <option value="lluvia_ligera">Lluvia Ligera</option>
+                                <option value="lluvia">Lluvia</option>
+                                <option value="tormenta">Tormenta</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confidence">Nivel de Confianza</label>
+                            <select id="confidence" name="confidence">
+                                <option value="1.0">Muy Seguro (100%)</option>
+                                <option value="0.8">Bastante Seguro (80%)</option>
+                                <option value="0.6">Moderadamente Seguro (60%)</option>
+                                <option value="0.4">Poco Seguro (40%)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observations">Observaciones Adicionales</label>
+                        <textarea id="observations" name="observations"
+                                  placeholder="Describe el comportamiento observado, cantidad de individuos, etc."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reporter">Tu Nombre *</label>
+                        <input type="text" id="reporter" name="reporter" required
+                               placeholder="Nombre completo">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="resetForm">
+                        <i class="fas fa-undo"></i> Limpiar Formulario
+                    </button>
+                    <button type="submit" class="btn-primary" id="submitReport">
+                        <i class="fas fa-paper-plane"></i> Enviar Reporte
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="data/mock-data.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        let currentLocation = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeReportPage();
+            setupEventListeners();
+        });
+
+        function initializeReportPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const preSelectedSpecies = urlParams.get('species');
+
+            if (preSelectedSpecies) {
+                document.getElementById('speciesName').value = decodeURIComponent(preSelectedSpecies);
+                updateSpeciesSuggestions();
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('reportForm').addEventListener('submit', handleSubmit);
+            document.getElementById('resetForm').addEventListener('click', resetForm);
+            document.getElementById('getLocation').addEventListener('click', getCurrentLocation);
+            document.getElementById('speciesName').addEventListener('input', updateSpeciesSuggestions);
+            document.getElementById('photo').addEventListener('change', handlePhotoUpload);
+
+            setupPhotoUploadArea();
+        }
+
+        function setupPhotoUploadArea() {
+            const uploadArea = document.querySelector('.upload-area');
+            const fileInput = document.getElementById('photo');
+
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('drag-over');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    handlePhotoUpload({ target: fileInput });
+                }
+            });
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+
+            const submitButton = document.getElementById('submitReport');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+            try {
+                const formData = new FormData(e.target);
+                const reportData = Object.fromEntries(formData.entries());
+
+                if (currentLocation) {
+                    reportData.latitude = currentLocation.latitude;
+                    reportData.longitude = currentLocation.longitude;
+                }
+
+                reportData.timestamp = new Date().toISOString();
+
+                const result = await BiodiversityAPI.submitReport(reportData);
+
+                showToast('Reporte enviado exitosamente', 'success');
+                resetForm();
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error enviando reporte:', error);
+                showToast('Error enviando reporte. Inténtalo de nuevo.', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Reporte';
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('reportForm').reset();
+            document.getElementById('photoPreview').innerHTML = '';
+            document.getElementById('speciesSuggestions').innerHTML = '';
+            currentLocation = null;
+        }
+
+        function getCurrentLocation() {
+            const button = document.getElementById('getLocation');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        currentLocation = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        };
+
+                        document.getElementById('latitude').value = currentLocation.latitude.toFixed(6);
+                        document.getElementById('longitude').value = currentLocation.longitude.toFixed(6);
+
+                        button.innerHTML = '<i class="fas fa-check"></i>';
+                        showToast('Ubicación obtenida correctamente', 'success');
+
+                        setTimeout(() => {
+                            button.innerHTML = '<i class="fas fa-crosshairs"></i>';
+                        }, 2000);
+                    },
+                    (error) => {
+                        console.error('Error obteniendo ubicación:', error);
+                        button.innerHTML = '<i class="fas fa-times"></i>';
+                        showToast('No se pudo obtener la ubicación', 'error');
+
+                        setTimeout(() => {
+                            button.innerHTML = '<i class="fas fa-crosshairs"></i>';
+                        }, 2000);
+                    }
+                );
+            } else {
+                showToast('Geolocalización no soportada', 'error');
+                button.innerHTML = '<i class="fas fa-crosshairs"></i>';
+            }
+        }
+
+        function updateSpeciesSuggestions() {
+            const input = document.getElementById('speciesName');
+            const suggestionsContainer = document.getElementById('speciesSuggestions');
+            const query = input.value.toLowerCase();
+
+            if (query.length < 2) {
+                suggestionsContainer.innerHTML = '';
+                return;
+            }
+
+            const suggestions = MOCK_SPECIES_DATA
+                .filter(species =>
+                    species.species.toLowerCase().includes(query) ||
+                    species.scientific_name.toLowerCase().includes(query)
+                )
+                .slice(0, 5);
+
+            if (suggestions.length > 0) {
+                suggestionsContainer.innerHTML = suggestions
+                    .map(species => `
+                        <div class="suggestion-item" onclick="selectSpecies('${species.species}', '${species.scientific_name}', '${species.category}')">
+                            <strong>${species.species}</strong>
+                            <small>${species.scientific_name}</small>
+                        </div>
+                    `).join('');
+            } else {
+                suggestionsContainer.innerHTML = '';
+            }
+        }
+
+        function selectSpecies(name, scientific, category) {
+            document.getElementById('speciesName').value = name;
+            document.getElementById('scientificName').value = scientific;
+            document.getElementById('category').value = category;
+            document.getElementById('speciesSuggestions').innerHTML = '';
+        }
+
+        function handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('photoPreview');
+
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('La imagen es muy grande. Máximo 5MB.', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <div class="preview-image">
+                            <img src="${e.target.result}" alt="Preview">
+                            <button type="button" class="remove-photo" onclick="removePhoto()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removePhoto() {
+            document.getElementById('photo').value = '';
+            document.getElementById('photoPreview').innerHTML = '';
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()"
+                            style="background: none; border: none; font-size: 1.2rem; cursor: pointer; margin-left: auto;">×</button>
+                </div>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

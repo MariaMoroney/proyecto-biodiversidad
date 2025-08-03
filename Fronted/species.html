@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Especies - EcoVision</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoVision</span>
+            </div>
+
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="species.html" class="nav-link active">
+                    <i class="fas fa-paw"></i> Especies
+                </a>
+                <a href="pipeline.html" class="nav-link">
+                    <i class="fas fa-cogs"></i> Pipeline
+                </a>
+                <a href="report.html" class="nav-link">
+                    <i class="fas fa-camera"></i> Reportar
+                </a>
+            </div>
+
+            <button class="dark-mode-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="species-page">
+        <div class="page-header">
+            <h1><i class="fas fa-paw"></i> Explorador de Especies</h1>
+            <p>Descubre la increíble biodiversidad de Costa Rica</p>
+        </div>
+
+        <div class="filters-section">
+            <div class="filter-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="speciesSearch" placeholder="Buscar especies...">
+                </div>
+
+                <select id="categoryFilter">
+                    <option value="all">Todas las categorías</option>
+                    <option value="birds">Aves</option>
+                    <option value="mammals">Mamíferos</option>
+                    <option value="reptiles">Reptiles</option>
+                    <option value="amphibians">Anfibios</option>
+                </select>
+
+                <select id="statusFilter">
+                    <option value="all">Todos los estados</option>
+                    <option value="stable">Estable</option>
+                    <option value="vulnerable">Vulnerable</option>
+                    <option value="endangered">En peligro</option>
+                </select>
+
+                <button class="view-toggle" id="viewToggle">
+                    <i class="fas fa-th-large"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="species-grid" id="speciesGrid">
+        </div>
+
+        <div class="pagination" id="pagination">
+            <button class="page-btn" id="prevPage"><i class="fas fa-chevron-left"></i></button>
+            <span class="page-info" id="pageInfo">Página 1 de 5</span>
+            <button class="page-btn" id="nextPage"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </main>
+
+    <div class="species-modal" id="speciesModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <div class="modal-body" id="modalBody">
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="data/mock-data.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        let speciesData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        const itemsPerPage = 12;
+        let currentView = 'grid';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSpeciesPage();
+            setupEventListeners();
+        });
+
+        async function initializeSpeciesPage() {
+            try {
+                speciesData = await BiodiversityAPI.getSpecies();
+                filteredData = [...speciesData];
+                renderSpecies();
+                updatePagination();
+            } catch (error) {
+                console.error('Error cargando especies:', error);
+                speciesData = MOCK_SPECIES_DATA;
+                filteredData = [...speciesData];
+                renderSpecies();
+                updatePagination();
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('speciesSearch').addEventListener('input', handleSearch);
+            document.getElementById('categoryFilter').addEventListener('change', handleFilter);
+            document.getElementById('statusFilter').addEventListener('change', handleFilter);
+            document.getElementById('viewToggle').addEventListener('click', toggleView);
+            document.getElementById('prevPage').addEventListener('click', () => changePage(-1));
+            document.getElementById('nextPage').addEventListener('click', () => changePage(1));
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+        }
+
+        function handleSearch(e) {
+            const query = e.target.value.toLowerCase();
+            applyFilters(query);
+        }
+
+        function handleFilter() {
+            const search = document.getElementById('speciesSearch').value.toLowerCase();
+            applyFilters(search);
+        }
+
+        function applyFilters(searchQuery = '') {
+            const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            filteredData = speciesData.filter(species => {
+                const matchesSearch = species.species.toLowerCase().includes(searchQuery) ||
+                                    species.scientific_name.toLowerCase().includes(searchQuery);
+                const matchesCategory = category === 'all' || species.category === category;
+                const matchesStatus = status === 'all' || species.conservation_status === status;
+
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+
+            currentPage = 1;
+            renderSpecies();
+            updatePagination();
+        }
+
+        function renderSpecies() {
+            const grid = document.getElementById('speciesGrid');
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageData = filteredData.slice(start, end);
+
+            grid.className = `species-${currentView}`;
+            grid.innerHTML = pageData.map(species => createSpeciesCard(species)).join('');
+        }
+
+        function createSpeciesCard(species) {
+            const status = CONSERVATION_STATUS[species.conservation_status] || CONSERVATION_STATUS.stable;
+
+            return `
+                <div class="species-card" onclick="openSpeciesModal('${species.id}')">
+                    <div class="card-image">
+                        <img src="${species.photo_url}" alt="${species.species}">
+                        <div class="status-badge ${species.conservation_status}">
+                            ${status.icon}
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>${species.species}</h3>
+                        <p class="scientific-name">${species.scientific_name}</p>
+                        <div class="card-meta">
+                            <span class="category">${SPECIES_CATEGORIES[species.category]?.name}</span>
+                            <span class="confidence">${(species.confidence * 100).toFixed(0)}%</span>
+                        </div>
+                        <div class="card-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${species.habitat}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleView() {
+            currentView = currentView === 'grid' ? 'list' : 'grid';
+            const toggle = document.getElementById('viewToggle');
+            toggle.innerHTML = currentView === 'grid' ?
+                '<i class="fas fa-list"></i>' :
+                '<i class="fas fa-th-large"></i>';
+            renderSpecies();
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const newPage = currentPage + direction;
+
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderSpecies();
+                updatePagination();
+            }
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+
+        function openSpeciesModal(speciesId) {
+            const species = speciesData.find(s => s.id == speciesId);
+            if (!species) return;
+
+            const modal = document.getElementById('speciesModal');
+            const modalBody = document.getElementById('modalBody');
+
+            modalBody.innerHTML = createModalContent(species);
+            modal.style.display = 'flex';
+        }
+
+        function createModalContent(species) {
+            const status = CONSERVATION_STATUS[species.conservation_status] || CONSERVATION_STATUS.stable;
+
+            return `
+                <div class="modal-header">
+                    <img src="${species.photo_url}" alt="${species.species}">
+                    <div class="modal-title">
+                        <h2>${species.species}</h2>
+                        <p class="scientific-name">${species.scientific_name}</p>
+                        <div class="status-large ${species.conservation_status}">
+                            ${status.icon} ${status.name}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-details">
+                    <div class="detail-section">
+                        <h3>Información General</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="label">Categoría:</span>
+                                <span class="value">${SPECIES_CATEGORIES[species.category]?.name}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Hábitat:</span>
+                                <span class="value">${species.habitat}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Último avistamiento:</span>
+                                <span class="value">${formatTimeAgo(species.timestamp)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Reportado por:</span>
+                                <span class="value">${species.reporter}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Confianza:</span>
+                                <span class="value">${(species.confidence * 100).toFixed(0)}%</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Calidad de datos:</span>
+                                <span class="value">${species.quality_score}/100</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-primary" onclick="reportSimilar('${species.species}')">
+                        <i class="fas fa-camera"></i> Reportar Similar
+                    </button>
+                    <button class="btn-secondary" onclick="viewOnMap(${species.lat}, ${species.lng})">
+                        <i class="fas fa-map"></i> Ver en Mapa
+                    </button>
+                </div>
+            `;
+        }
+
+        function closeModal() {
+            document.getElementById('speciesModal').style.display = 'none';
+        }
+
+        function reportSimilar(speciesName) {
+            window.location.href = `report.html?species=${encodeURIComponent(speciesName)}`;
+        }
+
+        function viewOnMap(lat, lng) {
+            window.location.href = `index.html?lat=${lat}&lng=${lng}`;
+        }
+
+        function formatTimeAgo(timestamp) {
+            const now = new Date();
+            const time = new Date(timestamp);
+            const diffInMinutes = Math.floor((now - time) / (1000 * 60));
+
+            if (diffInMinutes < 1) return 'Ahora';
+            if (diffInMinutes < 60) return `Hace ${diffInMinutes} min`;
+
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            if (diffInHours < 24) return `Hace ${diffInHours}h`;
+
+            const diffInDays = Math.floor(diffInHours / 24);
+            return `Hace ${diffInDays} días`;
+        }
+
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('speciesModal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

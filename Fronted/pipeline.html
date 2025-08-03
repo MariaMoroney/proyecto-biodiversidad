@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline - EcoVision</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-leaf"></i>
+                <span>EcoVision</span>
+            </div>
+
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="species.html" class="nav-link">
+                    <i class="fas fa-paw"></i> Especies
+                </a>
+                <a href="pipeline.html" class="nav-link active">
+                    <i class="fas fa-cogs"></i> Pipeline
+                </a>
+                <a href="report.html" class="nav-link">
+                    <i class="fas fa-camera"></i> Reportar
+                </a>
+            </div>
+
+            <button class="dark-mode-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="pipeline-page">
+        <div class="page-header">
+            <h1><i class="fas fa-cogs"></i> Control del Pipeline</h1>
+            <p>Monitoreo y gestión del procesamiento de datos</p>
+        </div>
+
+        <div class="pipeline-controls">
+            <div class="control-panel">
+                <button class="btn-run-pipeline" id="runPipeline">
+                    <i class="fas fa-play"></i>
+                    Ejecutar Pipeline
+                </button>
+
+                <div class="pipeline-status" id="pipelineStatus">
+                    <div class="status-indicator idle">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Inactivo</span>
+                    </div>
+                </div>
+
+                <div class="last-execution">
+                    <span class="label">Última ejecución:</span>
+                    <span class="value" id="lastExecution">--</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pipeline-metrics">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 id="recordsProcessed">0</h3>
+                        <p>Registros Procesados</p>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 id="recordsCleaned">0</h3>
+                        <p>Registros Limpiados</p>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 id="recordsRejected">0</h3>
+                        <p>Registros Rechazados</p>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3 id="qualityScore">0%</h3>
+                        <p>Calidad de Datos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pipeline-sections">
+            <div class="section-grid">
+                <div class="etl-flow">
+                    <h2><i class="fas fa-project-diagram"></i> Flujo ETL</h2>
+                    <div class="flow-diagram">
+                        <div class="flow-step" id="extractStep">
+                            <div class="step-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3>Extract</h3>
+                                <p>Extrayendo datos de tabla RAW</p>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flow-arrow">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+
+                        <div class="flow-step" id="transformStep">
+                            <div class="step-icon">
+                                <i class="fas fa-filter"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3>Transform</h3>
+                                <p>Limpiando y validando datos</p>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flow-arrow">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+
+                        <div class="flow-step" id="loadStep">
+                            <div class="step-icon">
+                                <i class="fas fa-upload"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3>Load</h3>
+                                <p>Cargando a tabla CLEANED</p>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="logs-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-file-alt"></i> Logs de Ejecución</h2>
+                        <button class="btn-clear-logs" id="clearLogs">
+                            <i class="fas fa-trash"></i> Limpiar
+                        </button>
+                    </div>
+                    <div class="logs-container" id="logsContainer">
+                        <div class="log-entry info">
+                            <span class="log-time">14:30:15</span>
+                            <span class="log-level">INFO</span>
+                            <span class="log-message">Sistema iniciado correctamente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="backup-section">
+            <h2><i class="fas fa-save"></i> Archivos de Respaldo</h2>
+            <div class="backup-grid" id="backupGrid">
+                <div class="backup-card">
+                    <div class="backup-icon">
+                        <i class="fas fa-file-csv"></i>
+                    </div>
+                    <div class="backup-info">
+                        <h3>species_raw_20250127.csv</h3>
+                        <p>2.4 MB • Hace 30 min</p>
+                    </div>
+                    <div class="backup-actions">
+                        <button class="btn-download">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="backup-card">
+                    <div class="backup-icon">
+                        <i class="fas fa-file-csv"></i>
+                    </div>
+                    <div class="backup-info">
+                        <h3>species_cleaned_20250127.csv</h3>
+                        <p>2.1 MB • Hace 30 min</p>
+                    </div>
+                    <div class="backup-actions">
+                        <button class="btn-download">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="data/mock-data.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        let isRunning = false;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePipelinePage();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('runPipeline').addEventListener('click', runPipeline);
+            document.getElementById('clearLogs').addEventListener('click', clearLogs);
+        }
+
+        async function initializePipelinePage() {
+            try {
+                const metrics = await BiodiversityAPI.getPipelineMetrics();
+                updateMetrics(metrics);
+                addLogEntry('info', 'Página del pipeline inicializada');
+            } catch (error) {
+                console.error('Error cargando métricas:', error);
+                updateMetrics(MOCK_PIPELINE_METRICS);
+                addLogEntry('warning', 'Usando datos mock - backend no disponible');
+            }
+        }
+
+        async function runPipeline() {
+            if (isRunning) return;
+
+            isRunning = true;
+            updatePipelineStatus('running');
+            resetProgress();
+
+            const runButton = document.getElementById('runPipeline');
+            runButton.disabled = true;
+            runButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ejecutando...';
+
+            addLogEntry('info', 'Iniciando ejecución del pipeline...');
+
+            try {
+                await simulateETLProcess();
+
+                const result = await BiodiversityAPI.runPipeline();
+                updateMetrics(result);
+                updatePipelineStatus('success');
+                addLogEntry('success', 'Pipeline ejecutado exitosamente');
+                showToast('Pipeline ejecutado correctamente', 'success');
+
+            } catch (error) {
+                console.error('Error ejecutando pipeline:', error);
+                updatePipelineStatus('error');
+                addLogEntry('error', `Error: ${error.message}`);
+                showToast('Error ejecutando pipeline', 'error');
+            } finally {
+                isRunning = false;
+                runButton.disabled = false;
+                runButton.innerHTML = '<i class="fas fa-play"></i> Ejecutar Pipeline';
+            }
+        }
+
+        async function simulateETLProcess() {
+            const steps = ['extractStep', 'transformStep', 'loadStep'];
+            const stepNames = ['Extract', 'Transform', 'Load'];
+
+            for (let i = 0; i < steps.length; i++) {
+                const step = document.getElementById(steps[i]);
+                const progressBar = step.querySelector('.progress-fill');
+
+                step.classList.add('active');
+                addLogEntry('info', `Iniciando paso ${stepNames[i]}...`);
+
+                for (let progress = 0; progress <= 100; progress += 10) {
+                    progressBar.style.width = progress + '%';
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                step.classList.remove('active');
+                step.classList.add('completed');
+                addLogEntry('success', `Paso ${stepNames[i]} completado`);
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+
+        function updateMetrics(metrics) {
+            document.getElementById('recordsProcessed').textContent = metrics.records_processed?.toLocaleString() || '0';
+            document.getElementById('recordsCleaned').textContent = metrics.records_cleaned?.toLocaleString() || '0';
+            document.getElementById('recordsRejected').textContent = metrics.records_rejected?.toLocaleString() || '0';
+            document.getElementById('qualityScore').textContent = (metrics.data_quality_score || 0).toFixed(1) + '%';
+
+            if (metrics.last_run) {
+                document.getElementById('lastExecution').textContent = formatDateTime(metrics.last_run);
+            }
+        }
+
+        function updatePipelineStatus(status) {
+            const statusIndicator = document.getElementById('pipelineStatus');
+            const statusDot = statusIndicator.querySelector('.status-dot');
+            const statusText = statusIndicator.querySelector('.status-text');
+
+            statusIndicator.className = `pipeline-status ${status}`;
+
+            switch (status) {
+                case 'running':
+                    statusText.textContent = 'Ejecutando';
+                    break;
+                case 'success':
+                    statusText.textContent = 'Completado';
+                    break;
+                case 'error':
+                    statusText.textContent = 'Error';
+                    break;
+                default:
+                    statusText.textContent = 'Inactivo';
+            }
+        }
+
+        function resetProgress() {
+            const steps = document.querySelectorAll('.flow-step');
+            steps.forEach(step => {
+                step.classList.remove('active', 'completed');
+                const progressBar = step.querySelector('.progress-fill');
+                if (progressBar) {
+                    progressBar.style.width = '0%';
+                }
+            });
+        }
+
+        function addLogEntry(level, message) {
+            const container = document.getElementById('logsContainer');
+            const timestamp = new Date().toLocaleTimeString();
+
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${level}`;
+            logEntry.innerHTML = `
+                <span class="log-time">${timestamp}</span>
+                <span class="log-level">${level.toUpperCase()}</span>
+                <span class="log-message">${message}</span>
+            `;
+
+            container.insertBefore(logEntry, container.firstChild);
+
+            if (container.children.length > 50) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        function clearLogs() {
+            const container = document.getElementById('logsContainer');
+            container.innerHTML = `
+                <div class="log-entry info">
+                    <span class="log-time">${new Date().toLocaleTimeString()}</span>
+                    <span class="log-level">INFO</span>
+                    <span class="log-message">Logs limpiados</span>
+                </div>
+            `;
+        }
+
+        function formatDateTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()"
+                            style="background: none; border: none; font-size: 1.2rem; cursor: pointer; margin-left: auto;">×</button>
+                </div>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

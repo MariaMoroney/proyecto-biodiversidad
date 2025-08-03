@@ -1,0 +1,6 @@
+2025-08-03 12:05:19,009 - INFO - Iniciando pipeline ETL de Biodiversidad
+2025-08-03 12:05:19,019 - ERROR - Error de extracción: (sqlite3.OperationalError) no such table: raw_marine_data
+[SQL: SELECT raw_marine_data.id AS raw_marine_data_id, raw_marine_data.species_name AS raw_marine_data_species_name, raw_marine_data.location AS raw_marine_data_location, raw_marine_data.latitude AS raw_marine_data_latitude, raw_marine_data.longitude AS raw_marine_data_longitude, raw_marine_data.sighting_date AS raw_marine_data_sighting_date, raw_marine_data.observer_name AS raw_marine_data_observer_name, raw_marine_data.observer_email AS raw_marine_data_observer_email, raw_marine_data.description AS raw_marine_data_description, raw_marine_data.photo_url AS raw_marine_data_photo_url, raw_marine_data.created_at AS raw_marine_data_created_at 
+FROM raw_marine_data]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-03 12:05:19,021 - WARNING - D: No hay datos para procesar
