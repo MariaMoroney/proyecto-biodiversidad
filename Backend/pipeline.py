@@ -1,6 +1,6 @@
 #integracion del Pipeline ETL 
 from etl_pipeline import run_etl, BiodiversityETLPipeline, insert_sample_data
-from scheduler import pipeline_scheduler, run_pipeline_manual, get_scheduler_status
+from scheduler import PipelineScheduler, get_scheduler_status
 import json
 from datetime import datetime
 
@@ -77,7 +77,7 @@ def get_pipeline_metrics():
 def start_automated_pipeline():
     """start pipeline auto"""
     try:
-        pipeline_scheduler.start_scheduler()
+        PipelineScheduler.start_scheduler()
         return {
             "status": "success",
             "message": "Pipeline automatizado iniciado",
@@ -93,7 +93,7 @@ def start_automated_pipeline():
 def stop_automated_pipeline():
     """stop pipeline auto"""
     try:
-        pipeline_scheduler.stop_scheduler()
+        PipelineScheduler.stop_scheduler()
         return {
             "status": "success",
             "message": "Pipeline automatizado detenido",
@@ -109,7 +109,7 @@ def stop_automated_pipeline():
 def configure_pipeline_schedule(config):
     """confi horario del pipeline"""
     try:
-        success = pipeline_scheduler.update_config(config)
+        success = PipelineScheduler.update_config(config)
         if success:
             return {
                 "status": "success",

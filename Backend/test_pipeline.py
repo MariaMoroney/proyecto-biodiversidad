@@ -7,6 +7,9 @@ import subprocess
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
+from database import create_tables
+
+create_tables()
 
 class EcoVisionTester:
     def __init__(self):

@@ -12,9 +12,9 @@ import re
 import math
 
 #importar modelos
-from database import SessionLocal, engine
+from database import SessionLocal, engine, create_tables
 from models import RawMarineData, CleanedMarineData, PipelineLog
-
+create_tables()
 class BiodiversityETLPipeline:
     """Pipeline ETL"""
     
@@ -92,7 +92,7 @@ class BiodiversityETLPipeline:
         """
         extract
         """
-        self.logger.info("↻ Iniciando extracción de datos...")
+        self.logger.info(" Iniciando extracción de datos...")
         self.metrics['start_time'] = datetime.now()
         
         try:

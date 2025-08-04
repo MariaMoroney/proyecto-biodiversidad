@@ -18,7 +18,7 @@ from pipeline import (
 
 from database import get_db, create_tables
 
-
+create_tables()
 app = FastAPI(
     title="EcoVision Marine API",
     description="API para el sistema de monitoreo de especies marinas",
