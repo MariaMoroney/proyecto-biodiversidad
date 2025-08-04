@@ -111,7 +111,8 @@ class EcoVisionTester:
             
             #probar las conexiones
             db = SessionLocal()
-            db.execute("SELECT 1")
+            from sqlalchemy import text
+            db.execute(text("SELECT 1"))
             db.close()
             self.log_test("Conexión a BD", True, "Conexión exitosa")
             

@@ -1,0 +1,20 @@
+{
+  "start_time": "2025-08-03 18:49:25.138625",
+  "tests_run": 31,
+  "tests_passed": 23,
+  "tests_failed": 8,
+  "errors": [
+    "Import pipeline: Error: No module named 'Backend'",
+    "Conexi\u00f3n a BD: Error: Textual SQL expression 'SELECT 1' should be explicitly declared as text('SELECT 1')",
+    "Ejecuci\u00f3n ETL: Status: error",
+    "M\u00e9trica records_extracted: Valor: 0",
+    "M\u00e9trica records_transformed: Valor: 0",
+    "M\u00e9trica records_loaded: Valor: 0",
+    "Inicio servidor API: Servidor no pudo iniciar",
+    "Archivos de backup: Encontrados 0 archivos de backup"
+  ],
+  "warnings": [],
+  "end_time": "2025-08-03T18:49:32.890124",
+  "duration_seconds": 7.751499,
+  "success_rate": 74.19354838709677
+}

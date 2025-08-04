@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 
 # Importar el pipeline ETL
-from Backend.etl_pipeline import run_etl, BiodiversityETLPipeline
+from etl_pipeline import run_etl, BiodiversityETLPipeline
 
 class PipelineScheduler:
     """automatizacion del inicio del pipeline"""
