@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "schedule_time": "02:00",
+  "schedule_days": [
+    "monday",
+    "wednesday",
+    "friday"
+  ],
+  "max_retries": 3,
+  "retry_delay_minutes": 5,
+  "backup_retention_days": 30,
+  "log_level": "INFO"
+}

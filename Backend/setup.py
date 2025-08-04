@@ -62,7 +62,7 @@ class EcoVisionSetup:
             if file_path.exists():
                 print(f"✅ {file_name}")
             else:
-                print(f"❌ {file_name} - fatla!!!")
+                print(f"❌ {file_name} - falta!!!")
                 missing_files.append(file_name)
         
         if missing_files:
